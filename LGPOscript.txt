@@ -8,9 +8,11 @@ tar -xf LGPO.zip
 
 REM exporting the polices to a folder named LGPO-export-bkp
 
-LGPO.exe /b C:\Users\LGPO\LGPO-export-bkp /n "LGPO-exports"
+LGPO.exe /b C:\ /n "LGPO-exports"
 
 REM importing
+LGPO.exe /g C:\LGPO-exports
+
 LGPO.exe /s sec.inf
 LGPO.exe /ac audit.csv
 LGPO.exe /m machine.pol
