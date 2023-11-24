@@ -1,7 +1,5 @@
 
-cd C:\Users
-mkdir LGPO
-cd C:\Users\LGPO
+cd C:\
 
 REM downloading LGPO.exe from microsoft
 wget https://download.microsoft.com/download/8/5/C/85C25433-A1B0-4FFA-9429-7E023E7DA8D8/LGPO.zip
@@ -9,7 +7,8 @@ wget https://download.microsoft.com/download/8/5/C/85C25433-A1B0-4FFA-9429-7E023
 tar -xf LGPO.zip
 
 REM exporting the polices to a folder named LGPO-export-bkp
-LGPO.exe /b LGPO-export-bkp /n "LGPO-exports"
+
+LGPO.exe /b C:\Users\LGPO\LGPO-export-bkp /n "LGPO-exports"
 
 REM importing
 LGPO.exe /s sec.inf
