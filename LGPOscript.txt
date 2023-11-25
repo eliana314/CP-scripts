@@ -1,3 +1,8 @@
+cd C:\Windows\System32
+secedit /configure /cfg %windir%\inf\defltbase.inf /db defltbase.sdb /verbose
+RD /S /Q "%WinDir%\System32\GroupPolicy"
+RD /S /Q "%WinDir%\System32\GroupPolicyUsers"
+gpupdate.exe /force
 
 cd C:\
 
@@ -8,10 +13,11 @@ tar -xf LGPO.zip
 
 REM exporting the polices to a folder named LGPO-export-bkp
 
-LGPO.exe /b C:\ /n "LGPO-exports"
+LGPO.exe /b C:\ /n "LGPO-bkp"
+ren C:\{F10A77CE-5906-4CF1-95A6-C1FFF634DB12} LGPO-bkp
 
 REM importing
-LGPO.exe /g C:\LGPO-exports
+LGPO.exe /g C:\LGPO-bkp
 
 LGPO.exe /s sec.inf
 LGPO.exe /ac audit.csv
