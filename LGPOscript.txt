@@ -4,22 +4,11 @@ RD /S /Q "%WinDir%\System32\GroupPolicy"
 RD /S /Q "%WinDir%\System32\GroupPolicyUsers"
 gpupdate.exe /force
 
-cd C:\
+cd C:\tmp
 
-REM downloading LGPO.exe from microsoft
-wget https://download.microsoft.com/download/8/5/C/85C25433-A1B0-4FFA-9429-7E023E7DA8D8/LGPO.zip
+LGPO.exe /s "C:\tmp\cp-settings-bkup\DomainSysvol\GPO\Machine\microsoft\windows nt\SecEdit\GptTmpl.inf"
+LGPO.exe /ac "C:\tmp\cp-settings-bkup\DomainSysvol\GPO\Machine\microsoft\windows nt\Audit\audit.csv"
 
-tar -xf LGPO.zip
-
-REM exporting the polices to a folder named LGPO-export-bkp
-LGPO.exe /b C:\ /n "LGPO-bkp"
-ren C:\{F10A77CE-5906-4CF1-95A6-C1FFF634DB12} LGPO-bkp
-
-REM importing
-LGPO.exe /g C:\LGPO-bkp
-
-LGPO.exe /s "C:\LGPO-bkp\DomainSysvol\GPO\Machine\microsoft\windows nt\SecEdit\GptTmpl.inf"
-REM LGPO.exe /ac audit.csv
 REM LGPO.exe /m machine.pol
 REM LGPO.exe /u user.pol
 
