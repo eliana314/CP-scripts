@@ -1,8 +1,9 @@
-cd C:\Windows\System32
-secedit /configure /cfg %windir%\inf\defltbase.inf /db defltbase.sdb /verbose
-RD /S /Q "%WinDir%\System32\GroupPolicy"
-RD /S /Q "%WinDir%\System32\GroupPolicyUsers"
-gpupdate.exe /force
+REM this is what the cp slideshow says we should do but idk yet
+REM cd C:\Windows\System32
+REM secedit /configure /cfg %windir%\inf\defltbase.inf /db defltbase.sdb /verbose
+REM RD /S /Q "%WinDir%\System32\GroupPolicy"
+REM RD /S /Q "%WinDir%\System32\GroupPolicyUsers"
+REM gpupdate.exe /force
 
 cd C:\tmp
 
@@ -12,4 +13,3 @@ LGPO.exe /ac "C:\tmp\cp-settings-bkup\DomainSysvol\GPO\Machine\microsoft\windows
 REM LGPO.exe /m machine.pol
 REM LGPO.exe /u user.pol
 
-LGPO.exe /boot
