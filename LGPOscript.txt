@@ -1,8 +1,8 @@
 REM this is what the cp slideshow says we should do but idk yet
-REM cd C:\Windows\System32
-REM secedit /configure /cfg %windir%\inf\defltbase.inf /db defltbase.sdb /verbose
-REM RD /S /Q "%WinDir%\System32\GroupPolicy"
-REM RD /S /Q "%WinDir%\System32\GroupPolicyUsers"
+cd C:\Windows\System32
+secedit /configure /cfg %windir%\inf\defltbase.inf /db defltbase.sdb /verbose
+RD /S /Q "%WinDir%\System32\GroupPolicy"
+RD /S /Q "%WinDir%\System32\GroupPolicyUsers"
 REM gpupdate.exe /force
 
 cd C:\tmp
