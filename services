@@ -1,0 +1,12 @@
+REM stoppoing and disabling bad services
+
+sc stop "RemoteRegistry"
+sc config "RemoteRegistry" start= disabled
+sc stop "upnphost"
+sc config "upnphost" start= disabled
+sc stop ""
+sc stop ""
+sc stop ""
+sc stop ""
+sc stop ""
+sc stop ""
