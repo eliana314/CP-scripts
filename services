@@ -4,8 +4,13 @@ sc stop "RemoteRegistry"
 sc config "RemoteRegistry" start= disabled
 sc stop "upnphost"
 sc config "upnphost" start= disabled
-sc stop ""
-sc stop ""
+
+REM this is the iss service
+sc stop "W3SVC" 
+sc config "W3SVC" start= disabled
+
+sc stop "apache2"
+sc config "apache2" start= disabled
 sc stop ""
 sc stop ""
 sc stop ""
