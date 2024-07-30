@@ -1,0 +1,11 @@
+import subprocess
+
+# getting the url of the readme
+def get_README_url():
+  READMEurl= input(str("Enter the URL of the README file: "))
+  return READMEurl
+
+# making a readme file
+def mk_README_file(READMEurl):
+  subprocess.run("curl -o README.html " + READMEurl, shell=True")
+  
