@@ -1,4 +1,16 @@
+##python, pip, and beautifullsoup have to be installed for this to work
+
 import subprocess
+from bs4 import BeautifulSoup
+
+
+#global vars
+README_filepath = "C:\tmp\README.html"
+README_admins = []
+README_users = []
+
+
+################functionsssssssssssssss
 
 # getting the url of the readme
 def get_README_url():
@@ -7,5 +19,74 @@ def get_README_url():
 
 # making a readme file
 def mk_README_file(READMEurl):
-  subprocess.run("curl -o README.html " + READMEurl, shell=True")
+  subprocess.run("curl -o README.html " + READMEurl, shell=True)
+
+def get_README_content():
+  README_content = open("README.html", "r")
+  #print(README_content.read())
+  return README_content
+
+def parse_README():
+  parsed_html = BeautifulSoup(README_content, 'html.parser')
+  useful_text_raw = parsed_html.find('pre').text
+  useful_text = useful_text_raw.splitlines()
+  
+  #print (useful_text)
+  return useful_text
+
+#appending to the readme admin and user lists based on conditions of the lines 
+# starting with "authorized admins" and "authorized users", thanks chat gpt!!!
+def get_README_adminsusers(useful_text):
+
+  
+  in_users_section = False #so we are defaulting to the admin section
+
+  for line in useful_text:
+    line = line.strip() #making sure there are no unwanted spaces
+    
+    if line.startswith('Authorized Administrators:'):
+        continue
+    elif line.startswith('Authorized Users:'):
+        in_users_section = True #the authorized user tag indicates we are now in the
+      # users section
+        continue
+    elif in_users_section:
+        if line:
+          README_users.append(line)
+    else:
+        if line and not line.startswith('password:'):
+          README_admins.append(line)
+  
+  return README_admins, README_users
+
+def get_README_people(README_admins, README_users):
+  README_people = README_admins + README_users
+  
+  return README_people
+
+
+
+
+
+####################start
+
+
+#READMEurl = get_README_url()
+#mk_README_file(READMEurl)
+
+README_content = get_README_content()
+useful_text = parse_README()
+
+README_admins, README_users = get_README_adminsusers(useful_text)
+README_people = get_README_people(README_admins, README_users)
+
+#testing with print statements
+
+print("Authorized Administrators: ")
+print(README_admins)
+print("  ")
+print("Authorized Users: ")
+print(README_users)
+print("README people")
+print(README_people)
   
