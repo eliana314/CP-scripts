@@ -1,78 +1,84 @@
 ##python, pip, and beautifullsoup have to be installed for this to work
 
 import subprocess
+import re
+import random
 from bs4 import BeautifulSoup
 
-
 #global vars
-README_filepath = "C:\tmp\README.html"
-README_admins = []
-README_users = []
-
+README_admins = set()
+README_users = set()
 
 ################functionsssssssssssssss
 
+
 # getting the url of the readme
 def get_README_url():
-  READMEurl= input(str("Enter the URL of the README file: "))
+  print("in url fucntion")
+  READMEurl = input(str("Enter the URL of the README file: "))
   return READMEurl
+
 
 # making a readme file
 def mk_README_file(READMEurl):
   subprocess.run("curl -o README.html " + READMEurl, shell=True)
+
 
 def get_README_content():
   README_content = open("README.html", "r")
   #print(README_content.read())
   return README_content
 
+
 def parse_README():
   parsed_html = BeautifulSoup(README_content, 'html.parser')
   useful_text_raw = parsed_html.find('pre').text
   useful_text = useful_text_raw.splitlines()
-  
+
   #print (useful_text)
   return useful_text
 
-#appending to the readme admin and user lists based on conditions of the lines 
+
+#appending to the readme admin and user lists based on conditions of the lines
 # starting with "authorized admins" and "authorized users", thanks chat gpt!!!
 def get_README_adminsusers(useful_text):
 
+  in_users_section = False  #so we are defaulting to the admin section
   
-  in_users_section = False #so we are defaulting to the admin section
-
   for line in useful_text:
     line = line.strip() #making sure there are no unwanted spaces
     
     if line.startswith('Authorized Administrators:'):
-        continue
+      continue
     elif line.startswith('Authorized Users:'):
-        in_users_section = True #the authorized user tag indicates we are now in the
+      in_users_section = True  #the authorized user tag indicates we are now in the
       # users section
-        continue
+      continue
     elif in_users_section:
-        if line:
-          README_users.append(line)
+      if line:
+        README_users.add(line)
     else:
-        if line and not line.startswith('password:'):
-          README_admins.append(line)
-  
+      if line and not line.startswith('password:'):
+        #to prevent it from including the (you) after your name
+        #line.split('('')[0] splits on the opening paratheses and takes the first item
+        line = line.split('(')[0].strip()
+        README_admins.add(line)
+
   return README_admins, README_users
 
+
 def get_README_people(README_admins, README_users):
-  README_people = README_admins + README_users
-  
+  README_people = README_admins | README_users
+
   return README_people
-
-
-
 
 
 ####################start
 
+#readme file
 
-#READMEurl = get_README_url()
-#mk_README_file(READMEurl)
+READMEurl = get_README_url()
+mk_README_file(READMEurl)
 
 README_content = get_README_content()
 useful_text = parse_README()
@@ -87,6 +93,4 @@ print(README_admins)
 print("  ")
 print("Authorized Users: ")
 print(README_users)
-print("README people")
-print(README_people)
   
