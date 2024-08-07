@@ -1,0 +1,100 @@
+import subprocess
+import re
+
+default_users = {'Administrator', 'DefaultAccount', 'Guest', 'WDAGUtilityAccount'}
+
+def get_SYSTEM_all():
+  SYSTEM_all_raw = subprocess.run(['net', 'user'], capture_output=True, text=True)
+
+  return SYSTEM_all_raw.stdout
+
+def parse_SYSTEM_all(SYSTEM_all_raw):
+  # Initialize an empty list to store administrator names
+  SYSTEM_all = set()
+
+  # Split the output into lines, because of the format of net user there are still three usernames per item :((
+  SYSTEM_all_lines = SYSTEM_all_raw.splitlines()
+
+  # Find where the username section is starting so that we can start appending names one row after that (i +1)
+  start_index = None
+
+  for i, line in enumerate(SYSTEM_all_lines):
+      if 'User accounts for' in line: #triggers that we are now in the section actually listing usernames
+          start_index = i + 1
+          break
+
+  # Extract the names from the lines after the "user accountsw for" header
+  for line in SYSTEM_all_lines[start_index:]:
+    line = line.strip()
+   # conditional to skip lines that are a bunch of dashes (thats what the regex does) or "the command was successful"
+    
+    if line and not re.match(r'[-]+', line) and 'The command completed successfully.' not in line:
+      
+      for user in line.split(): #line.split() splits on the white space to break the groups of three usernames into individual items
+        user = user.strip() #gets rid of any whitespace
+        
+        if user: # meaning if user exists, so we can avoid adding empty strings
+          SYSTEM_all.add(user)
+
+  return SYSTEM_all
+
+#i took out some conditions of what not to include because the happen while three usernames are all in one item so it removes all three usernames instead of just one. this is not ideal but for now my function will still include several default accoutns: guest, defaultacoount, WADGUtility, administrator.
+  
+
+
+
+def get_SYSTEM_admins():
+  SYSTEM_admins_raw = subprocess.run(['net', 'localgroup', 'administrators'], capture_output=True, text=True)
+
+  return SYSTEM_admins_raw.stdout
+
+
+def parse_SYSTEM_admins(SYSTEM_admins_raw):
+  # Initialize an empty set to store administrator names
+  SYSTEM_admins = set()
+
+  # Split the output into lines
+  lines = SYSTEM_admins_raw.splitlines()
+
+  # Find where the members section is starting so that we can start appending names one row after that (i +1)
+  start_index = None
+  
+  for i, line in enumerate(lines):
+      if 'Members' in line:
+          start_index = i + 1
+          break
+
+  # Extract the names from the lines after the "Members" header
+  for line in lines[start_index:]:
+      
+      line = line.strip()
+     
+    # conditional to skip lines that are a bunch of dashes (thats what the regex does) or "the command was successful" or the "default administrator"
+      if line and not re.match(r'[-]+', line) and 'The command completed successfully.' not in line and 'Administrator' not in line:
+        SYSTEM_admins.add(line)
+
+  return SYSTEM_admins
+
+
+###########################start
+
+#resetting system admins raw to the .stdout of the subprocess, idk exactly what the difference between the intial result and the stdout is but its probably ok. 
+
+SYSTEM_all_raw = get_SYSTEM_all()
+SYSTEM_all = parse_SYSTEM_all(SYSTEM_all_raw)
+SYSTEM_all = set(SYSTEM_all)
+
+SYSTEM_admins_raw = get_SYSTEM_admins()
+SYSTEM_admins = parse_SYSTEM_admins(SYSTEM_admins_raw)
+
+SYSTEM_people = SYSTEM_all - default_users
+SYSTEM_users = SYSTEM_people - SYSTEM_admins
+
+
+print("system Administrators:")
+print(SYSTEM_admins)
+print("")
+print("system users:")
+print(SYSTEM_users)
+print("")
+print("all users ", SYSTEM_all)
