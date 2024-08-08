@@ -1,9 +1,7 @@
+#this file gets a set of admins, users, and all people from the readme based on a url providedf
 ##python, pip, and beautifullsoup have to be installed for this to work
-
-import subprocess
-import re
-import random
 from bs4 import BeautifulSoup
+import subprocess
 
 #global vars
 README_admins = set()
@@ -30,7 +28,7 @@ def get_README_content():
   return README_content
 
 
-def parse_README():
+def parse_README(README_content):
   parsed_html = BeautifulSoup(README_content, 'html.parser')
   useful_text_raw = parsed_html.find('pre').text
   useful_text = useful_text_raw.splitlines()
@@ -77,20 +75,4 @@ def get_README_people(README_admins, README_users):
 
 #readme file
 
-READMEurl = get_README_url()
-mk_README_file(READMEurl)
-
-README_content = get_README_content()
-useful_text = parse_README()
-
-README_admins, README_users = get_README_adminsusers(useful_text)
-README_people = get_README_people(README_admins, README_users)
-
-#testing with print statements
-
-print("Authorized Administrators: ")
-print(README_admins)
-print("  ")
-print("Authorized Users: ")
-print(README_users)
   
