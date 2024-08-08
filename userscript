@@ -1,0 +1,54 @@
+import readmepeople as rp
+import systempeople as sp
+import windowsactions as wa
+
+#################################### getting the readme people
+#READMEurl = rp.get_README_url()
+#rp.mk_README_file(READMEurl)
+
+README_content = rp.get_README_content()
+useful_text = rp.parse_README(README_content)
+
+README_admins, README_users = rp.get_README_adminsusers(useful_text)
+README_people = rp.get_README_people(README_admins, README_users)
+
+#testing with print statements
+
+print("Authorized Administrators: ")
+print(README_admins)
+print("  ")
+print("Authorized Users: ")
+print(README_users)
+
+###############################getting the system people
+SYSTEM_all_raw = sp.get_SYSTEM_all()
+SYSTEM_all = sp.parse_SYSTEM_all(SYSTEM_all_raw)
+SYSTEM_all = set(SYSTEM_all)
+
+SYSTEM_admins_raw = sp.get_SYSTEM_admins()
+SYSTEM_admins = sp.parse_SYSTEM_admins(SYSTEM_admins_raw)
+
+SYSTEM_people = SYSTEM_all - sp.default_users
+SYSTEM_users = SYSTEM_people - SYSTEM_admins
+
+
+print("system Administrators:")
+print(SYSTEM_admins)
+print("")
+print("system users:")
+print(SYSTEM_users)
+print("")
+print("all users ", SYSTEM_all)
+print("")
+
+#######################comparing the readme to what is actually on the system and fixing stuff
+
+wa.del_and_add_people(README_people, SYSTEM_people)
+wa.fix_account_types(README_admins, SYSTEM_admins)
+
+############################fixing the passwords
+my_user_raw = wa.get_my_user()
+my_user = wa.parse_my_user(my_user_raw)
+print("my user is " + my_user)
+
+#wa.fix_passwords(wa.password_base, SYSTEM_people)
