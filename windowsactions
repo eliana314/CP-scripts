@@ -1,0 +1,119 @@
+#this file compares the sets of people from teh readme and the system and makes the necessary changes to the vm(system)
+
+import subprocess
+import random
+
+def compare(README_set, SYSTEM_set): #comparing the readme to what is actually on the system
+  
+  yesREADME_noSYSTEM = README_set - SYSTEM_set
+  noREADME_yesSYSTEM = SYSTEM_set - README_set
+
+  return yesREADME_noSYSTEM, noREADME_yesSYSTEM
+
+def del_from_system(noREADME_yesSYSTEM): #deleting the users that are not supposed to be on the system
+  for user in noREADME_yesSYSTEM:
+    confirm = input("would you like to delete " + user + " from the system? (y/n): ")
+
+    if confirm == "y":
+      subprocess.run(['net', 'user', user, "/delete"], capture_output=True)
+      print(user + " has been deleted from the system.")
+
+def ad_to_system(yesREADME_noSYSTEM):
+  password = get_random_password()
+
+  for user in yesREADME_noSYSTEM:
+    confirm = input("would you like to add " + user + " to the system? (y/n): ")
+
+    if confirm == "y":
+      subprocess.run(['net', 'user', user, password, "/add"], capture_output=True) #adds each user to the system from whatever set is passed to the function
+      print(user + " has been added to the system.")
+
+def get_random_password():
+  random_password= "." 
+  
+  #just getting some random characters to be a password
+  for i in range(3):
+    random_int = random.randint(1, 10)
+    random_password = str(random_password) + str(random_int)
+
+  for i in range(6):
+    random_char = random.choice("a,b+cde#f&g)h$i^j?k/l+m+o-pqRSTUVWXYZ")
+    random_password = str(random_password) + str(random_char)
+
+  return random_password
+
+
+def mk_admin(yesREADME_noSYSTEM):
+  #makes each user in this set an admin
+  for user in yesREADME_noSYSTEM:
+    subprocess.run(['net', 'localgroup', 'administrators', user, '/add'], capture_output=True)
+    print("added " + user + " to the administrators group.")
+
+def mk_nonadmin(noREADME_yesSYSTEM):
+  #removes each user in this set from the admin group
+  for user in noREADME_yesSYSTEM:
+    subprocess.run( ['net', 'localgroup', 'administrators', user, '/delete'], capture_output=True)
+    print(user + " is not an admin anymore.")
+
+
+def del_and_add_people(README_people, SYSTEM_people):
+  missing_people, bad_people  = compare(README_people, SYSTEM_people)
+  # this sets missing people equal to those in the set "yesREADME_noSYSTEM" 
+  #and bad people equal to those in the set "noREADME_yesSYSTEM""
+
+  if bad_people:
+    print("these people should not exist on the system:" + str(bad_people))
+    del_from_system(bad_people)
+  else:
+    print("there are no people that should not be on the system.")
+  
+  if missing_people:
+    print("these people should exist on the system: " + str(missing_people))
+    ad_to_system(missing_people)
+  else:
+    print("there are no people missing from the system.")
+
+def fix_account_types(README_admins, SYSTEM_admins):
+  missing_admins, bad_admins = compare(README_admins, SYSTEM_admins)
+
+  if missing_admins:
+    print("these people should be admins: " + str(missing_admins))
+    confirm = input("would you like to make these people admins? (y/n): ")
+    if confirm == "y":
+      mk_admin(missing_admins)
+  else:
+    print("there are no missing admins")
+
+  if bad_admins:
+    print("these people should not be admins: " + str(bad_admins))
+    confirm = input("would you like to change these people to users? (y/n):" )
+    
+    if confirm == "y":
+      mk_nonadmin(bad_admins)           
+  
+  else:
+    print("there are no bad admins")
+
+#resetting everyone's passwords except for my own to make sure that they are all secure
+#this should be done in a way that i can find out what users passowrds are if needed
+
+password_base = "E1i4nAw0ww!!"
+
+def get_my_user():
+  result = subprocess.run(['whoami'], capture_output=True, text=True)
+  my_user_raw = result.stdout.strip()
+
+  return my_user_raw
+
+def parse_my_user(my_user_raw):
+  my_user = my_user_raw.split("\\")[-1].strip()
+  return my_user
+
+
+def fix_passwords(password_base, SYSTEM_people):
+  for user in SYSTEM_people:
+    if user != my_user:
+      password = password_base + user
+
+      subprocess.run(['net', 'user', user, password], capture_output=True)
+      print(user + "'s password has been changed")
