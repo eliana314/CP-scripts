@@ -1,7 +1,11 @@
-#this file compares the sets of people from teh readme and the system and makes the necessary changes to the vm(system)
+#this file is a bunch of functions that relate to executing commands on the windows system
+##and also the conditions underwhich these commands should be executed
 
 import subprocess
 import random
+
+###################### functions to compare the readme and system, deleteing people that 
+###shouldn't be there, adding those who should, and correcting who is an admin and who is a user.
 
 def compare(README_set, SYSTEM_set): #comparing the readme to what is actually on the system
   
@@ -87,14 +91,13 @@ def fix_account_types(README_admins, SYSTEM_admins):
   if bad_admins:
     print("these people should not be admins: " + str(bad_admins))
     confirm = input("would you like to change these people to users? (y/n):" )
-    
     if confirm == "y":
       mk_nonadmin(bad_admins)           
-  
   else:
     print("there are no bad admins")
 
-#resetting everyone's passwords except for my own to make sure that they are all secure
+
+#functions that reset everyone's passwords except for my own to make sure that they are all secure
 #this should be done in a way that i can find out what users passowrds are if needed
 
 password_base = "E1i4nAw0ww!!"
@@ -109,14 +112,16 @@ def parse_my_user(my_user_raw):
   my_user = my_user_raw.split("\\")[-1].strip()
   return my_user
 
-
-def fix_passwords(password_base, SYSTEM_people):
+def fix_passwords(password_base, SYSTEM_people, my_user):
+  
   for user in SYSTEM_people:
     if user != my_user:
       password = password_base + user
 
       subprocess.run(['net', 'user', user, password], capture_output=True)
       print(user + "'s password has been changed")
+
+#####fucntions that offer other readme actions like creating groups, adding users to groups, etc.
 
 def add_new_user():
   new_user = input("Enter the name of the new user: ")
@@ -168,3 +173,4 @@ def new_user():
 
   if new_user == "y":
     add_new_user()
+
