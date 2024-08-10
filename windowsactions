@@ -117,3 +117,54 @@ def fix_passwords(password_base, SYSTEM_people):
 
       subprocess.run(['net', 'user', user, password], capture_output=True)
       print(user + "'s password has been changed")
+
+def add_new_user():
+  new_user = input("Enter the name of the new user: ")
+  new_user_pass = input("Enter the password for the new user: ")  
+  subprocess.run(['net', 'user', new_user, new_user_pass, '/add'], capture_output=True)
+  print(new_user + " has been added to the system.")
+  
+def create_new_group():
+  group_name = input("what would you like to name the new group? ")
+  subprocess.run(['net', 'localgroup', group_name, '/add'], capture_output=True)
+  print("the group " + group_name + " has been created")
+  return group_name
+
+def get_group_users():
+  group_users = []
+  
+  group_users_raw = input("list the users in this group separated by commas, to create a group with no users type n: ")
+
+  if group_users_raw != "n":
+    group_users_raw = group_users_raw.split(',')
+  
+    for user in group_users_raw:
+      user = user.strip()
+      group_users.append(user)
+      print(group_users)
+  else:
+    group_users = []
+  return group_users
+  
+def add_users_togroup(group_users, group_name):
+  
+  for user in group_users:
+    subprocess.run(['net', 'localgroup', group_name, user, '/add'], capture_output=True)
+    print("added " + user + " to the group " + group_name)
+
+def new_group():
+  new_group = input("would you like to create a new group? (y/n): ")
+
+  if new_group == "y":
+    group_name = create_new_group()
+    group_users = get_group_users()
+
+    if group_users:
+      add_users_togroup(group_users, group_name)
+
+
+def new_user():
+  new_user = input("would you like to add a new user? (y/n): ")
+
+  if new_user == "y":
+    add_new_user()
