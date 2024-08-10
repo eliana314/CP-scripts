@@ -52,3 +52,7 @@ my_user = wa.parse_my_user(my_user_raw)
 print("my user is " + my_user)
 
 #wa.fix_passwords(wa.password_base, SYSTEM_people)
+
+###########################adding new users and groups if wanted
+wa.new_user()
+wa.new_group()
