@@ -1,15 +1,14 @@
+@echo off
 REM this is what the cp slideshow says we should do but idk yet
-cd C:\Windows\System32
-secedit /configure /cfg %windir%\inf\defltbase.inf /db defltbase.sdb /verbose
-RD /S /Q "%WinDir%\System32\GroupPolicy"
-RD /S /Q "%WinDir%\System32\GroupPolicyUsers"
+REM cd C:\Windows\System32
+REM secedit /configure /cfg %windir%\inf\defltbase.inf /db defltbase.sdb /verbose
+REM RD /S /Q "%WinDir%\System32\GroupPolicy"
+REM RD /S /Q "%WinDir%\System32\GroupPolicyUsers"
 REM gpupdate.exe /force
 
-cd C:\tmp
+cd C:\tmp\lgpo
+LGPO.exe /s "C:\tmp\lgpo\cp-settings-bkup\DomainSysvol\GPO\Machine\microsoft\windows nt\SecEdit\GptTmpl.inf"
+LGPO.exe /ac "C:\tmp\lgpo\cp-settings-bkup\DomainSysvol\GPO\Machine\microsoft\windows nt\Audit\audit.csv"
 
-LGPO.exe /s "C:\tmp\cp-settings-bkup\DomainSysvol\GPO\Machine\microsoft\windows nt\SecEdit\GptTmpl.inf"
-LGPO.exe /ac "C:\tmp\cp-settings-bkup\DomainSysvol\GPO\Machine\microsoft\windows nt\Audit\audit.csv"
-
-REM LGPO.exe /m machine.pol
-REM LGPO.exe /u user.pol
-
+REM LGPO.exe /m "C:\tmp\lgpo\cp-settings-bkup\DomainSysvol\GPO\Machine\registry.pol
+REM LGPO.exe /u "C:\tmp\lgpo\cp-settings-bkup\DomainSysvol\GPO\User\registry.pol"
