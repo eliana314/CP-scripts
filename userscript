@@ -48,7 +48,7 @@ wa.fix_account_types(README_admins, SYSTEM_admins)
 ############################fixing the passwords
 my_user_raw = wa.get_my_user()
 my_user = wa.parse_my_user(my_user_raw)
-print("my user is " + my_user)
+print("my user is " + my_user + ", their password will not be changed")
 
 wa.fix_passwords(wa.password_base, SYSTEM_people, my_user) ##this reasigns eveybodies passwords except my own so its pretty dangerous but the passwords are easy to find from the script
 
