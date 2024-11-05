@@ -54,4 +54,4 @@ wa.fix_passwords(wa.password_base, SYSTEM_people, my_user) ##this reasigns eveyb
 
 ####################################giving the option to add new users or groups based on the readme
 wa.new_user()
-wa.new_group()
+wa.group()
