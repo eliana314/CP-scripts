@@ -130,7 +130,7 @@ def add_new_user():
   print(new_user + " has been added to the system.")
   
 def create_new_group():
-  group_name = input("what would you like to name the new group? ")
+  group_name = input("what would you like to name the new group? ").strip()
   subprocess.run(['net', 'localgroup', group_name, '/add'], capture_output=True)
   print("the group " + group_name + " has been created")
   return group_name
@@ -146,7 +146,6 @@ def get_group_users():
     for user in group_users_raw:
       user = user.strip()
       group_users.append(user)
-      print(group_users)
   else:
     group_users = []
   return group_users
@@ -157,17 +156,27 @@ def add_users_togroup(group_users, group_name):
     subprocess.run(['net', 'localgroup', group_name, user, '/add'], capture_output=True)
     print("added " + user + " to the group " + group_name)
 
-def new_group():
+def get_group_name():
   new_group = input("would you like to create a new group? (y/n): ")
-
   if new_group == "y":
     group_name = create_new_group()
-    group_users = get_group_users()
+  else:
+    group_name = input("what is the name of the group you would like to add users to? ").strip()
+    #make sure its all lowercase too
+  return group_name
+  
+def group():
+  group = input("would you like to add users to a group? (y/n): ")
+  if group == "y":
+      group_name = get_group_name()
+      group_users = get_group_users()
 
-    if group_users:
-      add_users_togroup(group_users, group_name)
-
-
+      if group_users:
+        add_users_togroup(group_users, group_name)
+      else:
+        print("there are no users in this group")  
+    
+        
 def new_user():
   new_user = input("would you like to add a new user? (y/n): ")
 
