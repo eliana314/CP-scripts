@@ -1,17 +1,22 @@
-REM stoppoing and disabling bad services
+import subprocess
 
-sc stop "RemoteRegistry"
-sc config "RemoteRegistry" start= disabled
-sc stop "upnphost"
-sc config "upnphost" start= disabled
+bad_services = ['w3svc', 'ftpsvc' , 'PlugPlay' , 'NetTcpPortSharing', 'RemoteRegistry', 'lmhosts', 'W3SVC' , 'XboxGipSvc' , 'XblAuthManager', 'XblGameSave', 'XboxNetApiSvc', 'SNMPTRAP', 'RemoteAccess']
 
-REM this is the iss service
-sc stop "W3SVC" 
-sc config "W3SVC" start= disabled
+rdp_services = ['SessionEnv', 'TermService', 'UmRdpService' , 'RpcSs', ]
 
-sc stop "apache2"
-sc config "apache2" start= disabled
-sc stop ""
-sc stop ""
-sc stop ""
-sc stop ""
+good_services = ['SecurityHealthService', 'Sense', 'WdNisSvc', 'WinDefend', 'mpssvc', 'EventLog', 'wuauserv', 'WSearch']
+
+def check_rdp(rdp_services, good_services, bad_services):
+  check_rdp = input("is rdp a critical service (would you like it to be enabled? (y/n): ").strip()
+  if check_rdp == 'y':
+    good_services.extend(rdp_services)
+  else:
+    bad_services.extend(rdp_services)
+
+def config_services(service_list, start_or_stop, enabled_or_disabled):
+    for service in service_list:
+      subprocess.run(f'sc {start_or_stop} "{service}"', capture_output = True)
+      subprocess.run(f'sc config "{service}" start= {enabled_or_disabled}', capture_output=True)
+                     
+config_services(bad_services, 'stop', 'disabled')
+config_services(good_services, 'start', 'enabled')
