@@ -15,8 +15,14 @@ def check_rdp(rdp_services, good_services, bad_services):
 
 def config_services(service_list, start_or_stop, enabled_or_disabled):
     for service in service_list:
-      subprocess.run(f'sc {start_or_stop} "{service}"', capture_output = True)
-      subprocess.run(f'sc config "{service}" start= {enabled_or_disabled}', capture_output=True)
-                     
-config_services(bad_services, 'stop', 'disabled')
-config_services(good_services, 'start', 'enabled')
+      result = subprocess.run(f'sc config "{service}" start= {enabled_or_disabled}', capture_output=True)
+      print(result.stdout)
+      #print(f"Service '{service}' startup type = {enabled_or_disabled}")
+      result = subprocess.run(f'sc {start_or_stop} "{service}"', capture_output = True)
+      print(result.stdout)
+      #print(f"Service '{service}' has been {start_or_stop}ed")
+      
+
+check_rdp(rdp_services, good_services, bad_services)
+config_services(bad_services, 'stop', 'Disabled')
+config_services(good_services, 'start', 'auto')
