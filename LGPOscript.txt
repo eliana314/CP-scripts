@@ -6,9 +6,11 @@ REM RD /S /Q "%WinDir%\System32\GroupPolicy"
 REM RD /S /Q "%WinDir%\System32\GroupPolicyUsers"
 REM gpupdate.exe /force
 
-cd C:\tmp\lgpo
-LGPO.exe /s "C:\tmp\lgpo\cp-settings-bkup\DomainSysvol\GPO\Machine\microsoft\windows nt\SecEdit\GptTmpl.inf"
-LGPO.exe /ac "C:\tmp\lgpo\cp-settings-bkup\DomainSysvol\GPO\Machine\microsoft\windows nt\Audit\audit.csv"
+cd C:\Cypat_Scripts\lgpo
+REM applying security settings
+LGPO.exe /s "C:\Cypat_Scripts\lgpo\LGPObkup_cisbenchmarks\DomainSysvol\GPO\Machine\microsoft\windows nt\SecEdit\GptTmpl.inf"
+LGPO.exe /ac "C:\Cypat_Scripts\lgpo\LGPObkup_cisbenchmarks\DomainSysvol\GPO\Machine\microsoft\windows nt\Audit\audit.csv"
 
-REM LGPO.exe /m "C:\tmp\lgpo\cp-settings-bkup\DomainSysvol\GPO\Machine\registry.pol
-REM LGPO.exe /u "C:\tmp\lgpo\cp-settings-bkup\DomainSysvol\GPO\User\registry.pol"
+REM applying administrative templates for machine (most configs like autoplay and smartscreen)
+LGPO.exe /t "C:\Cypat_Scripts\lgpo\machine_parsed_regfile.txt
+LGPO.exe /u "C:\Cypat_Scripts\lgpo\user_parsed_regfile.txt
